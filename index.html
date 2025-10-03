@@ -1,36 +1,451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<!-- CRITICAL for Responsiveness: Ensures the page scales correctly on all devices. -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3rd Semester Midterm Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- FIX: Moved Chart.js core before the Moment adapter, as the adapter requires the Chart object to exist. -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- Chosen Palette: Warm Neutrals -->
-<style>
-body {
-font-family: 'Inter', sans-serif;
-background-color: #f8f7f4;
-}
-/* Ensures the chart container is fluid and responsive */
-.chart-container {
-position: relative;
-width: 100%;
-max-width: 800px;
-margin-left: auto;
-margin-right: auto;
-height: 300px;
-max-height: 400px;
-}
-@media (min-width: 768px) {
-.chart-container {
-height: 350px;
-}
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3rd Semester Midterm Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        /* Theme overrides */
+        body.light {
+            background-color: #f8f7f4;
+        }
+        body.dark {
+            background-color: #121212;
+            color: #f3f4f6;
+        }
+        body.dark-red {
+            background-color: #200000;
+            color: #ffcccc;
+        }
+        body.dark .bg-white { background-color: #1f2937; }
+        body.dark .bg-gray-50 { background-color: #374151; }
+        body.dark .bg-gray-100 { background-color: #4b5563; }
+        body.dark .bg-indigo-50 { background-color: #312e81; }
+        body.dark .hover\:bg-indigo-100:hover { background-color: #4338ca; }
+        body.dark .bg-indigo-200 { background-color: #4338ca; }
+        body.dark .bg-yellow-100 { background-color: #713f12; }
+        body.dark .bg-indigo-100 { background-color: #4338ca; }
+        body.dark .text-gray-900 { color: #f3f4f6; }
+        body.dark .text-gray-800 { color: #d1d5db; }
+        body.dark .text-gray-700 { color: #9ca3af; }
+        body.dark .text-gray-600 { color: #9ca3af; }
+        body.dark .text-gray-500 { color: #6b7280; }
+        body.dark .text-indigo-700 { color: #a5b4fc; }
+        body.dark .text-indigo-600 { color: #818cf8; }
+        body.dark .text-indigo-800 { color: #c7d2fe; }
+        body.dark .text-indigo-500 { color: #818cf8; }
+        body.dark .text-yellow-800 { color: #fef08a; }
+        body.dark .border-gray-200 { border-color: #4b5563; }
+        body.dark .border-indigo-600 { border-color: #6366f1; }
+        body.dark .border-yellow-500 { border-color: #eab308; }
+        body.dark .hover\:border-indigo-300:hover { border-color: #818cf8; }
+        body.dark .bg-indigo-500 { background-color: #4f46e5; }
+        body.dark .bg-red-500 { background-color: #ef4444; }
+        body.dark .bg-gray-500 { background-color: #6b7280; }
+        body.dark-red .bg-white { background-color: #400000; }
+        body.dark-red .bg-gray-50 { background-color: #500000; }
+        body.dark-red .bg-gray-100 { background-color: #600000; }
+        body.dark-red .bg-indigo-50 { background-color: #500000; }
+        body.dark-red .hover\:bg-indigo-100:hover { background-color: #700000; }
+        body.dark-red .bg-indigo-200 { background-color: #700000; }
+        body.dark-red .bg-yellow-100 { background-color: #713f12; }
+        body.dark-red .bg-indigo-100 { background-color: #700000; }
+        body.dark-red .text-gray-900 { color: #ffcccc; }
+        body.dark-red .text-gray-800 { color: #ffaaaa; }
+        body.dark-red .text-gray-700 { color: #ff8888; }
+        body.dark-red .text-gray-600 { color: #ff7777; }
+        body.dark-red .text-gray-500 { color: #ff6666; }
+        body.dark-red .text-indigo-700 { color: #ffaaaa; }
+        body.dark-red .text-indigo-600 { color: #ff8888; }
+        body.dark-red .text-indigo-800 { color: #ffcccc; }
+        body.dark-red .text-indigo-500 { color: #ff8888; }
+        body.dark-red .text-yellow-800 { color: #fef08a; }
+        body.dark-red .border-gray-200 { border-color: #600000; }
+        body.dark-red .border-indigo-600 { border-color: #ff6666; }
+        body.dark-red .border-yellow-500 { border-color: #eab308; }
+        body.dark-red .hover\:border-indigo-300:hover { border-color: #ff8888; }
+        body.dark-red .text-red-500 { color: #ffcccc; }
+        body.dark-red .text-green-500 { color: #ffaaaa; }
+        body.dark-red .text-blue-500 { color: #ff8888; }
+        body.dark-red .bg-indigo-500 { background-color: #ff4444; }
+        body.dark-red .bg-red-500 { background-color: #ff6666; }
+        body.dark-red .bg-gray-500 { background-color: #aa3333; }
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 light">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <div class="flex justify-center items-center">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">3rd Semester Midterm Dashboard</h1>
+                <button id="theme-toggle" class="ml-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Toggle theme">
+                    <svg id="theme-icon" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </button>
+            </div>
+            <p class="mt-2 text-lg text-gray-600">Your interactive guide for midterm exam preparation.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <section id="timeline-view" class="bg-white p-6 rounded-xl shadow-md fade-in">
+                    <h2 class="text-2xl font-semibold mb-1">Exam Timeline Strategy</h2>
+                    <p class="text-gray-600 mb-4">Visualize your exam schedule to identify study gaps. Hover for details.</p>
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </section>
+
+                <section id="notice-and-guidelines" class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-600 fade-in">
+                    <h2 class="text-2xl font-semibold mb-3 text-indigo-700">Official Examination Notice</h2>
+                    <p class="text-sm font-medium text-gray-700 mb-4">Follow these guidelines for a smooth exam process.</p>
+                    <ul class="space-y-2 text-gray-700 list-inside">
+                        <li class="flex items-start"><span class="mr-2 text-indigo-500 font-bold">•</span><div><strong class="font-semibold">Reporting Time:</strong> Arrive 30 minutes early.</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-indigo-500 font-bold">•</span><div><strong class="font-semibold">Mandatory ID:</strong> Bring your University ID.</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-indigo-500 font-bold">•</span><div><strong class="font-semibold">Prohibited Items:</strong> No phones or unauthorized materials.</div></li>
+                        <li class="flex items-start"><span class="mr-2 text-indigo-500 font-bold">•</span><div><strong class="font-semibold">Discrepancies:</strong> Contact the Department Coordinator.</div></li>
+                    </ul>
+                </section>
+
+                <section id="full-schedule" class="fade-in">
+                    <h2 class="text-2xl font-semibold mb-4">Full Schedule Overview</h2>
+                    <div id="schedule-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-1 space-y-8">
+                <section id="current-time-block" class="bg-white p-6 rounded-xl shadow-md text-center fade-in">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-900">Current Time & Date</h2>
+                    <div id="digital-clock" class="text-gray-800 p-2 rounded-lg"></div>
+                </section>
+
+                <section id="upcoming-exam" class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-yellow-500 fade-in">
+                    <h2 class="text-2xl font-semibold mb-2 text-gray-900">Next Exam Countdown</h2>
+                    <div id="upcoming-exam-details" class="mb-4">
+                        <p class="text-xl font-bold text-indigo-600" id="next-exam-subject">Loading...</p>
+                        <p class="text-gray-600" id="next-exam-date">--</p>
+                    </div>
+                    <div id="countdown" class="text-3xl font-bold text-gray-800 bg-gray-100 p-4 rounded-lg">
+                        <span id="days">00</span>d : <span id="hours">00</span>h : <span id="minutes">00</span>m : <span id="seconds">00</span>s
+                    </div>
+                </section>
+
+                <section id="motivational-quote" class="bg-white p-6 rounded-xl shadow-md text-center fade-in">
+                    <h2 class="text-2xl font-semibold mb-3">Daily Motivation</h2>
+                    <p id="quote-text" class="text-gray-700 italic">"Loading quote..."</p>
+                    <button id="new-quote" class="mt-4 bg-indigo-200 text-indigo-800 px-4 py-2 rounded hover:bg-indigo-300 transition">New Quote</button>
+                </section>
+
+                <section id="key-observations" class="bg-white p-6 rounded-xl shadow-md fade-in">
+                    <h2 class="text-2xl font-semibold mb-3">Key Strategic Observations</h2>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">●</span><div><strong class="font-semibold">Intense Start:</strong> First three exams (Oct 11-14) are clustered. Prioritize early study.</div></li>
+                        <li class="flex items-start"><span class="text-green-500 mr-3 mt-1">●</span><div><strong class="font-semibold">Mid-Schedule Break:</strong> Use the 3-day gap (Oct 15-19) for review.</div></li>
+                        <li class="flex items-start"><span class="text-blue-500 mr-3 mt-1">●</span><div><strong class="font-semibold">Time Switching:</strong> Adjust for morning/afternoon exam shifts.</div></li>
+                    </ul>
+                </section>
+
+                <section id="study-material-links" class="bg-white p-6 rounded-xl shadow-md fade-in">
+                    <h2 class="text-2xl font-semibold mb-3">Google Drive Study Links</h2>
+                    <p class="text-gray-600 mb-4 text-sm">Access study materials (update with real links).</p>
+                    <div class="space-y-3">
+                        <a href="#" class="block bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium py-2 px-4 rounded-lg transition duration-150">DSA (CCE-2301) Materials</a>
+                        <a href="#" class="block bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium py-2 px-4 rounded-lg transition duration-150">Signal (CCE-2305) Formulas</a>
+                        <a href="#" class="block bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium py-2 px-4 rounded-lg transition duration-150">Math-3 Resources</a>
+                        <a href="#" class="block bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium py-2 px-4 rounded-lg transition duration-150">Discrete Math Notes</a>
+                    </div>
+                </section>
+
+                <section id="study-timer" class="bg-white p-6 rounded-xl shadow-md fade-in">
+                    <h2 class="text-2xl font-semibold mb-3">Study Timer</h2>
+                    <div class="text-center">
+                        <div id="timer-display" class="text-4xl font-mono mb-4">00:00:00</div>
+                        <button id="start-timer" class="bg-indigo-500 text-white px-4 py-2 rounded mr-2 hover:bg-indigo-600 transition">Start</button>
+                        <button id="stop-timer" class="bg-red-500 text-white px-4 py-2 rounded mr-2 hover:bg-red-600 transition">Stop</button>
+                        <button id="reset-timer" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Reset</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const examData = [
+                { subject: 'DSA', code: 'CCE-2301', date: '2025-10-11T14:30:00', duration: 90 },
+                { subject: 'Basic Principles of Islam', code: 'GEED-1201', date: '2025-10-12T14:30:00', duration: 91 },
+                { subject: 'Signal', code: 'CCE-2305', date: '2025-10-14T14:30:00', duration: 92 },
+                { subject: 'Math-3', code: 'MATHEMATICS-III', date: '2025-10-15T09:30:00', duration: 90 },
+                { subject: 'CHEM-2301', code: 'CHEM-2301', date: '2025-10-19T09:30:00', duration: 91 },
+                { subject: 'Discrete Mathematics', code: 'CCE-2307', date: '2025-10-21T14:30:00', duration: 95 }
+            ];
+
+            const scheduleContainer = document.getElementById('schedule-cards-container');
+            let timelineChart;
+
+            function renderScheduleCards() {
+                scheduleContainer.innerHTML = '';
+                examData.forEach(exam => {
+                    const examDate = new Date(exam.date);
+                    const isMorning = examDate.getHours() < 12;
+                    const timeIndicatorClass = isMorning ? 'bg-yellow-100 text-yellow-800' : 'bg-indigo-100 text-indigo-800';
+                    const timeIndicatorText = isMorning ? 'Morning Exam' : 'Afternoon Exam';
+                    scheduleContainer.innerHTML += `
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 hover:shadow-lg hover:border-indigo-300 transition-shadow duration-300 fade-in">
+                            <h3 class="font-bold text-lg text-gray-800">${exam.subject}</h3>
+                            <p class="text-sm text-gray-500 mb-2">${exam.code}</p>
+                            <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${timeIndicatorClass}">${timeIndicatorText}</span>
+                            <p class="text-md font-medium text-gray-700">${examDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                            <p class="text-md text-gray-600">${examDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            function findNextExam() {
+                const now = new Date();
+                return examData
+                    .map(exam => ({ ...exam, dateObj: new Date(exam.date) }))
+                    .filter(exam => exam.dateObj > now)
+                    .sort((a, b) => a.dateObj - b.dateObj)[0];
+            }
+
+            function startCountdown() {
+                const nextExam = findNextExam();
+                const nextExamSubjectEl = document.getElementById('next-exam-subject');
+                const nextExamDateEl = document.getElementById('next-exam-date');
+                const countdownEl = document.getElementById('countdown');
+                const daysEl = document.getElementById('days');
+                const hoursEl = document.getElementById('hours');
+                const minutesEl = document.getElementById('minutes');
+                const secondsEl = document.getElementById('seconds');
+
+                if (!nextExam) {
+                    nextExamSubjectEl.textContent = 'All exams finished!';
+                    nextExamDateEl.textContent = 'Congratulations!';
+                    countdownEl.innerHTML = '🎉';
+                    return;
+                }
+
+                nextExamSubjectEl.textContent = `${nextExam.subject} (${nextExam.code})`;
+                const examDate = new Date(nextExam.date);
+                nextExamDateEl.textContent = `${examDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })} at ${examDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+
+                const countdownInterval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const distance = examDate.getTime() - now;
+
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        countdownEl.innerHTML = 'Exam in progress!';
+                        setTimeout(startCountdown, 5000);
+                        return;
+                    }
+
+                    daysEl.textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                    hoursEl.textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                    minutesEl.textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    secondsEl.textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                }, 1000);
+            }
+
+            function updateClock() {
+                const clockEl = document.getElementById('digital-clock');
+                if (clockEl) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                    const dateString = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+                    clockEl.innerHTML = `<span class="text-3xl font-mono">${timeString}</span><span class="text-base text-gray-500 block mt-1">${dateString}</span>`;
+                }
+            }
+
+            function createTimelineChart() {
+                const ctx = document.getElementById('timelineChart').getContext('2d');
+                const currentTheme = document.body.classList[1] || 'light';
+                let afternoonBg = 'rgba(79, 70, 0.7)';
+                let afternoonBorder = 'rgb(79, 70, 229)';
+                let morningBg = 'rgba(234, 179, 8, 0.7)';
+                let morningBorder = 'rgb(234, 179, 8)';
+
+                if (currentTheme === 'dark') {
+                    afternoonBg = 'rgba(129, 140, 248, 0.7)';
+                    afternoonBorder = 'rgb(129, 140, 248)';
+                    morningBg = 'rgba(250, 204, 21, 0.7)';
+                    morningBorder = 'rgb(250, 204, 21)';
+                } else if (currentTheme === 'dark-red') {
+                    afternoonBg = 'rgba(220, 38, 38, 0.7)';
+                    afternoonBorder = 'rgb(220, 38, 38)';
+                    morningBg = 'rgba(153, 27, 27, 0.7)';
+                    morningBorder = 'rgb(153, 27, 27)';
+                }
+
+                const data = {
+                    datasets: [{
+                        label: 'Afternoon Exams (2:30 PM)',
+                        data: examData.filter(e => new Date(e.date).getHours() >= 14).map(e => ({ x: new Date(e.date), y: 1, exam: e })),
+                        backgroundColor: afternoonBg,
+                        borderColor: afternoonBorder,
+                        pointRadius: 8,
+                        pointHoverRadius: 12,
+                    }, {
+                        label: 'Morning Exams (9:30 AM)',
+                        data: examData.filter(e => new Date(e.date).getHours() < 12).map(e => ({ x: new Date(e.date), y: 2, exam: e })),
+                        backgroundColor: morningBg,
+                        borderColor: morningBorder,
+                        pointRadius: 8,
+                        pointHoverRadius: 12,
+                    }]
+                };
+
+                if (timelineChart) timelineChart.destroy();
+                timelineChart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: currentTheme === 'light' ? '#4b5563' : '#f3f4f6' } },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => `${context.raw.exam.subject} (${context.raw.exam.code})`,
+                                    afterLabel: context => `Time: ${new Date(context.raw.exam.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: { unit: 'day', tooltipFormat: 'MMM dd, yyyy', displayFormats: { day: 'MMM dd' } },
+                                title: { display: true, text: 'Date', color: currentTheme === 'light' ? '#4b5563' : '#f3f4f6' },
+                                min: '2025-10-10',
+                                max: '2025-10-22',
+                                grid: { color: currentTheme === 'light' ? '#e5e7eb' : '#4b5563' }
+                            },
+                            y: { display: false, min: 0, max: 3 }
+                        }
+                    }
+                });
+            }
+
+            // Theme toggle logic
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeCycle = ['light', 'dark', 'dark-red'];
+            const themeIcons = {
+                light: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />',
+                dark: '<path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />',
+                'dark-red': '<path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />'
+            };
+            let currentThemeIndex = 0;
+
+            themeToggle.addEventListener('click', () => {
+                currentThemeIndex = (currentThemeIndex + 1) % themeCycle.length;
+                const newTheme = themeCycle[currentThemeIndex];
+                document.body.classList.remove('light', 'dark', 'dark-red');
+                document.body.classList.add(newTheme);
+                themeIcon.innerHTML = themeIcons[newTheme];
+                createTimelineChart();
+            });
+
+            // Motivational quotes
+            const quotes = [
+                "The only way to do great work is to love what you do. - Steve Jobs",
+                "Success is not final, failure is not fatal. - Winston Churchill",
+                "Believe you can and you're halfway there. - Theodore Roosevelt",
+                "Dream big, work hard, stay focused. - Unknown",
+                "The future belongs to those who believe in their dreams. - Eleanor Roosevelt",
+                "Keep going, you're closer than you think. - Sam Levenson"
+            ];
+            const quoteText = document.getElementById('quote-text');
+            const newQuoteBtn = document.getElementById('new-quote');
+
+            function getRandomQuote() {
+                return quotes[Math.floor(Math.random() * quotes.length)];
+            }
+
+            quoteText.textContent = getRandomQuote();
+            newQuoteBtn.addEventListener('click', () => {
+                quoteText.classList.remove('fade-in');
+                void quoteText.offsetWidth; // Trigger reflow
+                quoteText.textContent = getRandomQuote();
+                quoteText.classList.add('fade-in');
+            });
+
+            // Study timer logic
+            let timerInterval;
+            let timerTime = 0;
+            const timerDisplay = document.getElementById('timer-display');
+            const startTimer = document.getElementById('start-timer');
+            const stopTimer = document.getElementById('stop-timer');
+            const resetTimer = document.getElementById('reset-timer');
+
+            function updateTimer() {
+                const hours = Math.floor(timerTime / 3600).toString().padStart(2, '0');
+                const minutes = Math.floor((timerTime % 3600) / 60).toString().padStart(2, '0');
+                const seconds = (timerTime % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+
+            startTimer.addEventListener('click', () => {
+                if (!timerInterval) {
+                    timerInterval = setInterval(() => {
+                        timerTime++;
+                        updateTimer();
+                    }, 1000);
+                }
+            });
+
+            stopTimer.addEventListener('click', () => {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            });
+
+            resetTimer.addEventListener('click', () => {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerTime = 0;
+                updateTimer();
+            });
+
+            renderScheduleCards();
+            startCountdown();
+            updateClock();
+            setInterval(updateClock, 1000);
+            createTimelineChart();
+        });
+    </script>
+</body>
+</html>
