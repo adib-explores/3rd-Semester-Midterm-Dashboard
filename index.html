@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- CRITICAL for Responsiveness: Ensures the page scales correctly on all devices. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3rd Semester Midterm Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FIX: Moved Chart.js core before the Moment adapter, as the adapter requires the Chart object to exist. -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Chosen Palette: Warm Neutrals -->
+<style>
+body {
+font-family: 'Inter', sans-serif;
+background-color: #f8f7f4;
+}
+/* Ensures the chart container is fluid and responsive */
+.chart-container {
+position: relative;
+width: 100%;
+max-width: 800px;
+margin-left: auto;
+margin-right: auto;
+height: 300px;
+max-height: 400px;
+}
+@media (min-width: 768px) {
+.chart-container {
+height: 350px;
+}
+}
